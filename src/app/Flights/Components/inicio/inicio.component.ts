@@ -2,7 +2,7 @@ import { Component, AfterViewInit, ViewChild, ElementRef } from '@angular/core';
 import { FormControl } from "@angular/forms";
 import { startWith, map, Observable } from "rxjs";
 import { DestinosService } from "../../Services/Destinos/destinos.service";
-import { HttpClient } from "@angular/common/http";
+import { VuelosService } from "../../Services/Vuelos/vuelos.service"
 
 
 @Component({
@@ -21,7 +21,7 @@ export class InicioComponent implements AfterViewInit {
   tiposVuelo = ['Turista', 'Ejecutiva', 'Lujo'];
   selectedTipoVuelo: string = '';
 
-  constructor(private destinosService: DestinosService, private http: HttpClient) {}
+  constructor(private destinosService: DestinosService, private vuelosService: VuelosService) {}
 
   ngAfterViewInit() {
     // Obtener datos de destinos desde el servicio
@@ -76,18 +76,8 @@ export class InicioComponent implements AfterViewInit {
   }
 
   calcularRuta(): void {
-    const origen = this.origenControl.value;
-    const destino = this.destinoControl.value;
-
-    this.http.get(`http://localhost:8080/calcular_ruta?origen=${origen}&destino=${destino}`)
-      .subscribe(
-        (data: any) => {
-          console.log('Ruta calculada:', data.ruta_calculada);
-        },
-        (error) => {
-          console.error('Error al calcular la ruta desde Python:', error);
-        }
-      );
+    const ruta = this.vuelosService.calcularRuta(this.origenControl.value, this.destinoControl.value);
+    console.log(ruta);
   }
 
 }
