@@ -64,7 +64,7 @@
     {"ciudad": "BUCARAMANGA", "pais": "COLOMBIA"},
     {"ciudad": "BUCAREST", "pais": "RUMANIA"},
     {"ciudad": "BUDAPEST", "pais": "HUNGRIA"},
-    {"ciudad": "BUENAVENTURA", "pais": "COLOMBIA"},
+   {"ciudad": "BUENAVENTURA", "pais": "COLOMBIA"},
     {"ciudad": "BUENOS AIRES", "pais": "ARGENTINA"},
     {"ciudad": "CABALLOCOCHA", "pais": "PERU"},
     {"ciudad": "CALGARY", "pais": "CANADA"},
@@ -8966,7 +8966,8 @@
       {
         "distancia": 9600,
         "origen": "BOGOTA COLOMBIA",
-        "destino": "BUDAPEST HUNGRIA"
+        "destino": "BUDAPEST HUNGRIA",
+        "costo": 600
       },
       {
         "distancia": 1200,
@@ -9456,7 +9457,8 @@
       {
         "distancia": 2400,
         "origen": "BOGOTA COLOMBIA",
-        "destino": "LIMA PERU"
+        "destino": "LIMA PERU",
+        "costo": 150
       },
       {
         "distancia": 9600,
@@ -11151,7 +11153,8 @@
       {
         "distancia": 9600,
         "origen": "BUDAPEST HUNGRIA",
-        "destino": "BOGOTA COLOMBIA"
+        "destino": "BOGOTA COLOMBIA",
+        "costo": 600
       },
       {
         "distancia": 2000,
@@ -16581,7 +16584,8 @@
       {
         "distancia": 801,
         "origen": "LIMA PERU",
-        "destino": "BOGOTA COLOMBIA"
+        "destino": "BOGOTA COLOMBIA",
+        "costo": 150
       },
       {
         "distancia": 1159,

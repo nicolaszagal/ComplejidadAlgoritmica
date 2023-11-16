@@ -1,16 +1,9 @@
-import { Vuelo } from "./vuelo.model";
-
-export interface Grafo {
-  [ciudad: string]: Conexion[];
-}
-
-export interface Nodo {
+export interface GraphNode {
   ciudad: string;
-  costoTotal: number;
-  vueloAnterior?: Vuelo;
 }
 
-export interface Conexion {
-  destino: string;
-  distancia: number;
+export interface GraphEdge{
+  origen: string,
+  destino: string,
+  peso: number // Division entre distancia y costo.
 }
