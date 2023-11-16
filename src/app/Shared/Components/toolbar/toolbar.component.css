@@ -1,0 +1,10 @@
+.example-spacer {
+  flex: 1 1 auto;
+}
+
+.buttons{
+  color:white;
+  margin: 0.5em;
+  text-decoration: none;
+
+}

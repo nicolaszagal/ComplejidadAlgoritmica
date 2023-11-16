@@ -1,0 +1,54 @@
+<div class="flight-app">
+  <h2>Bienvenido a Flights</h2>
+
+  <!-- Origen -->
+  <form class="form-vuelo">
+    <mat-form-field class="example-full-width">
+      <mat-label>Origen del Vuelo</mat-label>
+      <input #inputOrigen
+             type="text"
+             placeholder="Ingresa la ciudad"
+             aria-label="City"
+             matInput
+             [formControl]="origenControl"
+             [matAutocomplete]="autoOrigen">
+      <mat-autocomplete autoActiveFirstOption #autoOrigen="matAutocomplete">
+        <mat-option *ngFor="let option of filteredOptionsOrigen | async; trackBy: trackByFn" [value]="option">
+          {{ option }}
+        </mat-option>
+      </mat-autocomplete>
+    </mat-form-field>
+  </form>
+
+  <!-- Destino -->
+  <form class="form-vuelo">
+    <mat-form-field class="example-full-width">
+      <mat-label>Destino del Vuelo</mat-label>
+      <input #inputDestino
+             type="text"
+             placeholder="Ingresa la ciudad"
+             aria-label="City"
+             matInput
+             [formControl]="destinoControl"
+             [matAutocomplete]="autoDestino">
+      <mat-autocomplete autoActiveFirstOption #autoDestino="matAutocomplete">
+        <mat-option *ngFor="let option of filteredOptionsDestino | async; trackBy: trackByFn" [value]="option">
+          {{ option }}
+        </mat-option>
+      </mat-autocomplete>
+    </mat-form-field>
+  </form>
+
+  <!-- Tipo de vuelo -->
+  <mat-form-field class="input">
+    <mat-label>Introduzca el Tipo de vuelo</mat-label>
+    <mat-select [(value)]="selectedTipoVuelo">
+      <mat-option *ngFor="let tipo of tiposVuelo" [value]="tipo">
+        {{ tipo }}
+      </mat-option>
+    </mat-select>
+  </mat-form-field>
+  <br>
+
+  <button mat-raised-button (click)="calcular()">Calcular precio</button>
+</div>
