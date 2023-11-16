@@ -1,96 +1,118 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
-import { Observable } from 'rxjs';
-import { Vuelo } from "../../Models/vuelo.model";
-import { Nodo, Grafo, Conexion } from "../../Models/grafo.model";
+import { map, Observable } from 'rxjs';
+import { GraphNode, GraphEdge } from '../../Models/grafo.model';
 
 @Injectable({
   providedIn: 'root',
 })
 export class VuelosService {
-  private vuelosUrl = 'http://localhost:3000/vuelos';
-  private grafo: Grafo = {};
+  private apiUrl = 'http://localhost:3000/vuelos';
 
-  constructor(private http: HttpClient) {
-    this.getVuelos().subscribe(
-      (vuelosData: Vuelo[]) => {
-        this.construirGrafo(vuelosData);
-      },
-      error => {
-        console.error('Error al cargar los vuelos: ', error);
-      }
+  constructor(private http: HttpClient) {}
+
+  getGraphData(): Observable<any> {
+    return this.http.get(this.apiUrl);
+  }
+
+  buildGraph(): Observable<{ nodes: GraphNode[]; edges: GraphEdge[] }> {
+    return this.getGraphData().pipe(
+      map((vuelosData: any) => {
+        const nodes: GraphNode[] = [];
+        const edges: GraphEdge[] = [];
+
+        vuelosData.forEach((vuelo: any) => {
+          const origenNode: GraphNode = { ciudad: vuelo.origen };
+          const destinoNode: GraphNode = { ciudad: vuelo.destino };
+
+          if (!nodes.some((node) => node.ciudad === origenNode.ciudad)) {
+            nodes.push(origenNode);
+          }
+          if (!nodes.some((node) => node.ciudad === destinoNode.ciudad)) {
+            nodes.push(destinoNode);
+          }
+
+          const costo = vuelo.costo || 1;
+
+          const peso = costo !== 0 ? vuelo.distancia / costo : 0;
+
+          const edge: GraphEdge = {
+            origen: origenNode.ciudad,
+            destino: destinoNode.ciudad,
+            peso: peso,
+          };
+          edges.push(edge);
+        });
+
+        const graphData = { nodes, edges };
+        console.log('Graph Data:', graphData);
+
+        return graphData;
+      })
     );
   }
 
-  getVuelos(): Observable<Vuelo[]> {
-    return this.http.get<Vuelo[]>(this.vuelosUrl);
+  heuristic(node: GraphNode, goal: GraphNode): number {
+    return Math.abs(node.ciudad.length - goal.ciudad.length);
   }
 
-  private construirGrafo(vuelosData: Vuelo[]): void {
-    vuelosData.forEach(vuelo => {
-      if (!this.grafo[vuelo.origen]) {
-        this.grafo[vuelo.origen] = [];
-      }
-      const conexion: Conexion = {
-        destino: vuelo.destino,
-        distancia: vuelo.distancia,
-      };
-      this.grafo[vuelo.origen].push(conexion);
-    });
-  }
-
-  calcularRuta(origen: string | null, destino: string | null): Vuelo[] | null {
-    if (!origen || !destino) {
-      return null;
+  reconstruirRuta(vinoDesde: { [key: string]: string }, actual: string): string[] {
+    const rutaTotal: string[] = [actual];
+    while (vinoDesde[actual]) {
+      actual = vinoDesde[actual];
+      rutaTotal.unshift(actual);
     }
+    return rutaTotal;
+  }
 
-    const nodosAbiertos: Nodo[] = [{ ciudad: origen, costoTotal: Number.MAX_VALUE }];
-    const nodosCerrados: Set<string> = new Set();
+  calculatorRuta(origen: string | null, destino: string | null): string[] {
+    console.log(origen, "-", destino)
+    const conjuntoAbierto: string[] = [origen || ''];
+    const vinoDesde: { [key: string]: string } = {};
+    const costoReal: { [key: string]: number } = {};
+    const costoEstimado: { [key: string]: number } = {};
+    let edges: GraphEdge[] = []; // Agregamos esta línea
 
-    while (nodosAbiertos.length > 0) {
-      nodosAbiertos.sort((a, b) => a.costoTotal - b.costoTotal);
-      const nodoActual = nodosAbiertos.shift()!;
+    // Obtener las aristas del grafo
+    this.buildGraph().subscribe((graph) => {
+      edges = graph.edges;
+    });
 
-      console.log('Nodo actual:', nodoActual);
+    costoReal[origen || ''] = 0;
+    costoEstimado[origen || ''] = this.heuristic({ ciudad: origen || '' }, { ciudad: destino || '' });
 
-      if (nodoActual.ciudad === destino) {
-        console.log('Ruta encontrada!');
-        const ruta: Vuelo[] = [];
-        let vueloAnterior = nodoActual.vueloAnterior;
-        while (vueloAnterior) {
-          ruta.unshift(vueloAnterior);
-          vueloAnterior = vueloAnterior.vueloAnterior;
-        }
-        return ruta;
+    while (conjuntoAbierto.length > 0) {
+      const actual = conjuntoAbierto.reduce((minNode, node) =>
+        costoEstimado[node] < costoEstimado[minNode] ? node : minNode
+      );
+
+      if (actual === destino) {
+        return this.reconstruirRuta(vinoDesde, actual);
       }
 
-      console.log('Conexiones:', this.grafo[nodoActual.ciudad] || []);
+      conjuntoAbierto.splice(conjuntoAbierto.indexOf(actual), 1);
 
-      if (!nodosCerrados.has(nodoActual.ciudad)) {
-        nodosCerrados.add(nodoActual.ciudad);
+      const edgeActual = edges.filter((edge) => edge.origen === actual);
 
-        const conexiones = this.grafo[nodoActual.ciudad] || [];
-        for (const conexion of conexiones) {
-          const nuevoNodo: Nodo = {
-            ciudad: conexion.destino,
-            costoTotal: nodoActual.costoTotal + conexion.distancia,
-            vueloAnterior: {
-              distancia: conexion.distancia,
-              origen: nodoActual.ciudad,
-              destino: conexion.destino,
-            },
-          };
+      edgeActual.forEach((edge) => {
+        const vecino = edge.destino;
+        const costoRealTentativo = costoReal[actual] + edge.peso;
 
-          console.log('Nuevo nodo:', nuevoNodo);
+        if (!costoReal[vecino] || costoRealTentativo < costoReal[vecino]) {
+          vinoDesde[vecino] = actual;
+          costoReal[vecino] = costoRealTentativo;
+          costoEstimado[vecino] = costoReal[vecino] + this.heuristic(
+            { ciudad: vecino },
+            { ciudad: destino || '' }
+          );
 
-          if (!nodosCerrados.has(nuevoNodo.ciudad)) {
-            nodosAbiertos.push(nuevoNodo);
+          if (!conjuntoAbierto.includes(vecino)) {
+            conjuntoAbierto.push(vecino);
           }
         }
-      }
+      });
     }
 
-    console.log('No se encontró una ruta');
-    return null;
+    return [];
   }
 }

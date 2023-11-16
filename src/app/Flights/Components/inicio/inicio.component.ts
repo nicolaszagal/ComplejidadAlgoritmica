@@ -3,6 +3,7 @@ import { FormControl } from "@angular/forms";
 import { startWith, map, Observable } from "rxjs";
 import { DestinosService } from "../../Services/Destinos/destinos.service";
 import { VuelosService } from "../../Services/Vuelos/vuelos.service"
+import { GraphEdge, GraphNode } from "../../Models/grafo.model";
 
 
 @Component({
@@ -45,6 +46,9 @@ export class InicioComponent implements AfterViewInit {
           console.error('Error al obtener los destinos: ', error);
         }
     );
+    this.vuelosService.buildGraph().subscribe(
+        (graphData: { nodes: GraphNode[], edges: GraphEdge[]})=>{ }
+    );
   }
 
   private _filter(value: string, options: string[]): string[] {
@@ -76,7 +80,7 @@ export class InicioComponent implements AfterViewInit {
   }
 
   calcularRuta(): void {
-    const ruta = this.vuelosService.calcularRuta(this.origenControl.value, this.destinoControl.value);
+    const ruta = this.vuelosService.calculatorRuta(this.origenControl.value, this.destinoControl.value);
     console.log(ruta);
   }
 
