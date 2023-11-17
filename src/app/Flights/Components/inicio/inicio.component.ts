@@ -81,7 +81,14 @@ export class InicioComponent implements AfterViewInit {
 
   calcularRuta(): void {
     const ruta = this.vuelosService.calculatorRuta(this.origenControl.value, this.destinoControl.value);
-    console.log(ruta);
+    ruta.subscribe(
+      (rutaCalculada: string[]) => {
+        console.log('Ruta encontrada:', rutaCalculada);
+      },
+      (error: any) => {
+        console.error('Error al calcular la ruta:', error);
+      }
+    );
   }
 
 }

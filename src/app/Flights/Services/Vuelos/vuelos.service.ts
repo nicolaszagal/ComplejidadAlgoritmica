@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
-import { map, Observable } from 'rxjs';
+import {map, Observable, switchMap} from 'rxjs';
 import { GraphNode, GraphEdge } from '../../Models/grafo.model';
 
 @Injectable({
@@ -8,8 +8,18 @@ import { GraphNode, GraphEdge } from '../../Models/grafo.model';
 })
 export class VuelosService {
   private apiUrl = 'http://localhost:3000/vuelos';
+  private graph: { nodes: GraphNode[]; edges: GraphEdge[] } = {nodes: [], edges: []};
 
-  constructor(private http: HttpClient) {}
+  constructor(private http: HttpClient) {
+    this.buildGraph().subscribe(
+      (graphData) => {
+        this.graph = graphData;
+      },
+      (error) => {
+        console.error('Error al construir el grafo: ', error);
+      }
+    );
+  }
 
   getGraphData(): Observable<any> {
     return this.http.get(this.apiUrl);
@@ -22,8 +32,8 @@ export class VuelosService {
         const edges: GraphEdge[] = [];
 
         vuelosData.forEach((vuelo: any) => {
-          const origenNode: GraphNode = { ciudad: vuelo.origen };
-          const destinoNode: GraphNode = { ciudad: vuelo.destino };
+          const origenNode: GraphNode = {ciudad: vuelo.origen};
+          const destinoNode: GraphNode = {ciudad: vuelo.destino};
 
           if (!nodes.some((node) => node.ciudad === origenNode.ciudad)) {
             nodes.push(origenNode);
@@ -44,10 +54,7 @@ export class VuelosService {
           edges.push(edge);
         });
 
-        const graphData = { nodes, edges };
-        console.log('Graph Data:', graphData);
-
-        return graphData;
+        return {nodes, edges};
       })
     );
   }
@@ -65,54 +72,96 @@ export class VuelosService {
     return rutaTotal;
   }
 
-  calculatorRuta(origen: string | null, destino: string | null): string[] {
-    console.log(origen, "-", destino)
-    const conjuntoAbierto: string[] = [origen || ''];
-    const vinoDesde: { [key: string]: string } = {};
-    const costoReal: { [key: string]: number } = {};
-    const costoEstimado: { [key: string]: number } = {};
-    let edges: GraphEdge[] = []; // Agregamos esta línea
+  calculatorRuta(origen: string | null, destino: string | null): Observable<string[]> {
+    return new Observable<string[]>((observer) => {
+      let conjuntoAbierto: string[] = [origen || ''];
+      const vinoDesde: { [key: string]: string } = {};
+      const costoReal: { [key: string]: number } = {};
+      const costoEstimado: { [key: string]: number } = {};
+      let graph: { edges: GraphEdge[] } = {edges: []};
+      let nodosVecinos: { [key: string]: string[] } = {};
 
-    // Obtener las aristas del grafo
-    this.buildGraph().subscribe((graph) => {
-      edges = graph.edges;
-    });
+      this.buildGraph().subscribe((graphData) => {
+        graph = graphData;
 
-    costoReal[origen || ''] = 0;
-    costoEstimado[origen || ''] = this.heuristic({ ciudad: origen || '' }, { ciudad: destino || '' });
-
-    while (conjuntoAbierto.length > 0) {
-      const actual = conjuntoAbierto.reduce((minNode, node) =>
-        costoEstimado[node] < costoEstimado[minNode] ? node : minNode
-      );
-
-      if (actual === destino) {
-        return this.reconstruirRuta(vinoDesde, actual);
-      }
-
-      conjuntoAbierto.splice(conjuntoAbierto.indexOf(actual), 1);
-
-      const edgeActual = edges.filter((edge) => edge.origen === actual);
-
-      edgeActual.forEach((edge) => {
-        const vecino = edge.destino;
-        const costoRealTentativo = costoReal[actual] + edge.peso;
-
-        if (!costoReal[vecino] || costoRealTentativo < costoReal[vecino]) {
-          vinoDesde[vecino] = actual;
-          costoReal[vecino] = costoRealTentativo;
-          costoEstimado[vecino] = costoReal[vecino] + this.heuristic(
-            { ciudad: vecino },
-            { ciudad: destino || '' }
-          );
-
-          if (!conjuntoAbierto.includes(vecino)) {
-            conjuntoAbierto.push(vecino);
+        graph.edges.forEach((edge) => {
+          if (!nodosVecinos[edge.origen]) {
+            nodosVecinos[edge.origen] = [];
           }
-        }
-      });
-    }
+          nodosVecinos[edge.origen].push(edge.destino);
+        });
+        const formatCiudad = (ciudad: string | null): string => {
+          return ciudad ? ciudad.toUpperCase().replace(/,/, '') : '';
+        };
 
-    return [];
+        const origenFormatted = formatCiudad(origen);
+        const destinoFormatted = formatCiudad(destino);
+
+        costoReal[origenFormatted || ''] = 0;
+        costoEstimado[origenFormatted || ''] = this.heuristic({ciudad: origenFormatted || ''}, {ciudad: destinoFormatted || ''});
+
+        const recursiveAlgorithm = (actual: string) => {
+          if (conjuntoAbierto.length === 0) {
+            console.log('No se encontró una ruta');
+            observer.next([]);
+            observer.complete();
+            return;
+          }
+
+          const actualFormatted = formatCiudad(actual);
+
+          const vecinos = nodosVecinos[actualFormatted] || [];
+          console.log("Nodos vecinos:", vecinos);
+
+          vecinos.forEach((vecino) => {
+            if (vecino === destinoFormatted) {
+              const edge = graph.edges.find((e) => e.origen === actualFormatted && e.destino === vecino);
+              console.log(edge)
+
+              // Verificar si existe el edge
+              if (edge) {
+                const costoRealTentativo = costoReal[actualFormatted] + edge.peso;
+
+                if (!costoReal[vecino] || costoRealTentativo < costoReal[vecino]) {
+                  vinoDesde[vecino] = actualFormatted;
+                  costoReal[vecino] = costoRealTentativo;
+                  costoEstimado[vecino] = costoReal[vecino] + this.heuristic(
+                    { ciudad: vecino },
+                    { ciudad: destino || '' }
+                  );
+
+                  if (!conjuntoAbierto.includes(vecino)) {
+                    conjuntoAbierto.push(vecino);
+                    console.log(conjuntoAbierto)
+                  }
+                }
+              }
+            }
+          });
+          //Apartir de aca esta el problema. No esta recorriendo los nodos, ya halló los vecinos, pero no los recorre
+
+          conjuntoAbierto.splice(conjuntoAbierto.indexOf(actualFormatted), 1);
+
+          if (actualFormatted === destino) {
+            console.log('Ruta encontrada!');
+            observer.next(this.reconstruirRuta(vinoDesde, actualFormatted));
+            observer.complete();
+            return;
+          }
+
+
+          // Encontrar el próximo nodo con el costo estimado más bajo
+          const nuevoActual = conjuntoAbierto.length > 0 ? conjuntoAbierto.reduce((minNode, node) => {
+            return costoEstimado[node] < costoEstimado[minNode] ? node : minNode;
+          }, '') : '';
+
+          // Llamada recursiva después de procesar un nodo
+          recursiveAlgorithm(nuevoActual);
+        };
+
+        // Algoritmo de inicialización
+        recursiveAlgorithm(origen || '');
+      });
+    });
   }
 }
