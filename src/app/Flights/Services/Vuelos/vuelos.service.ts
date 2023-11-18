@@ -80,5 +80,39 @@ export class VuelosService {
       observer.complete();
     });
   }
+  // En vuelos.service.ts
+
+  getPrice(origen: string | null, destino: string | null): Observable<number> {
+    return new Observable<number>((observer) => {
+      this.calculatorRuta(origen, destino).subscribe(
+        (ruta) => {
+          if (ruta.length === 0) {
+            observer.next(0); // Manejar el caso en que no hay ruta encontrada
+          } else {
+            const costoTotal = this.calcularCostoTotal(ruta);
+            observer.next(costoTotal);
+          }
+          observer.complete();
+        },
+        (error) => {
+          console.error('Error al obtener el precio: ', error);
+          observer.error(error);
+        }
+      );
+    });
+  }
+
+  private calcularCostoTotal(ruta: string[]): number {
+    let costoTotal = 0;
+    for (let i = 0; i < ruta.length - 1; i++) {
+      const origen = ruta[i];
+      const destino = ruta[i + 1];
+      const edge = this.graph.edge(origen, destino);
+      if (edge) {
+        costoTotal += edge;
+      }
+    }
+    return costoTotal;
+  }
 
 }

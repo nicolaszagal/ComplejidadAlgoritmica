@@ -21,7 +21,8 @@ export class InicioComponent implements AfterViewInit {
   selectedTipoVuelo: string = '';
   rutaEncontrada: string[] = [];
   mostrarRuta: boolean = false;
-  costoTotal: number = 0;
+  precioTotal: number = 0;
+  mostrarPrecio: boolean = false;
 
   constructor(private destinosService: DestinosService, private vuelosService: VuelosService) {}
 
@@ -89,7 +90,6 @@ export class InicioComponent implements AfterViewInit {
     ruta.subscribe(
       (rutaCalculada: string[]) => {
         console.log('Ruta encontrada:', rutaCalculada);
-        this.costoTotal = costoTotal;
         this.rutaEncontrada = rutaCalculada;
         this.mostrarRuta = true;
       },
@@ -97,5 +97,25 @@ export class InicioComponent implements AfterViewInit {
         console.error('Error al calcular la ruta:', error);
       }
     );
+  }
+
+  obtenerPrecio(): void {
+    const origen = this.origenControl.value;
+    const destino = this.destinoControl.value;
+
+    if (origen && destino) {
+      this.vuelosService.getPrice(origen, destino).subscribe(
+        (precio) => {
+          console.log('Precio Total:', precio);
+          this.precioTotal = precio;
+          this.mostrarPrecio = true;
+        },
+        (error) => {
+          console.error('Error al obtener el precio: ', error);
+        }
+      );
+    } else {
+      console.error('Error: Debes seleccionar un origen y destino.');
+    }
   }
 }
