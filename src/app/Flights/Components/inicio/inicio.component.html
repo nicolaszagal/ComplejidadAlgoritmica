@@ -50,7 +50,8 @@
   </mat-form-field>
   <br>
 
-  <button mat-raised-button (click)="calcularRuta()">Calcular precio</button>
+  <button mat-raised-button (click)="calcularRuta()">Calcular ruta</button>
+  <button mat-raised-button *ngIf="mostrarPrecio" (click)="obtenerPrecio()">Calcular precio</button>
 
   <br>
   <br>
@@ -58,6 +59,9 @@
 
   <div *ngIf="mostrarRuta">
     <app-card [ruta]="rutaEncontrada"></app-card>
+  </div>
+  <div *ngIf="mostrarPrecio">
+    <app-card [precio]="precioTotal"></app-card>
   </div>
 
 </div>
