@@ -3,8 +3,6 @@ import { FormControl } from "@angular/forms";
 import { startWith, map, Observable } from "rxjs";
 import { DestinosService } from "../../Services/Destinos/destinos.service";
 import { VuelosService } from "../../Services/Vuelos/vuelos.service"
-import { GraphEdge, GraphNode } from "../../Models/grafo.model";
-
 
 @Component({
   selector: 'app-inicio',
@@ -21,6 +19,9 @@ export class InicioComponent implements AfterViewInit {
   filteredOptionsDestino!: Observable<string[]>;
   tiposVuelo = ['Turista', 'Ejecutiva', 'Lujo'];
   selectedTipoVuelo: string = '';
+  rutaEncontrada: string[] = [];
+  mostrarRuta: boolean = false;
+  costoTotal: number = 0;
 
   constructor(private destinosService: DestinosService, private vuelosService: VuelosService) {}
 
@@ -47,8 +48,12 @@ export class InicioComponent implements AfterViewInit {
         }
     );
     this.vuelosService.buildGraph().subscribe(
-        (graphData: { nodes: GraphNode[], edges: GraphEdge[]})=>{ }
+      (graphData) => {},
+      (error) => {
+        console.error('Error al construir el grafo: ', error);
+      }
     );
+
   }
 
   private _filter(value: string, options: string[]): string[] {
@@ -84,11 +89,13 @@ export class InicioComponent implements AfterViewInit {
     ruta.subscribe(
       (rutaCalculada: string[]) => {
         console.log('Ruta encontrada:', rutaCalculada);
+        this.costoTotal = costoTotal;
+        this.rutaEncontrada = rutaCalculada;
+        this.mostrarRuta = true;
       },
       (error: any) => {
         console.error('Error al calcular la ruta:', error);
       }
     );
   }
-
 }
