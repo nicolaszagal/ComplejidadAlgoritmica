@@ -1,0 +1,11 @@
+<div class="card">
+  <div class="card-body">
+    <h2 class="card-title">Ruta Encontrada</h2>
+    <div *ngIf="ruta.length > 0">
+      <p>{{ ruta.join(' -> ') }}</p>
+    </div>
+    <div *ngIf="ruta.length === 0">
+      <p>No se encontró una ruta entre los puntos especificados.</p>
+    </div>
+  </div>
+</div>
