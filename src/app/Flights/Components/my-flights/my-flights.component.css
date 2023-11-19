@@ -11,11 +11,18 @@
   bottom: 10px;
   left: 0;
   color: white;
-  background-color: #3949ab;
+  background-color: #4054b4;
   border-color: transparent;
   height: 40px;
 }
 
 h1{
   text-align: center;
+}
+
+.eliminar-btn:hover {
+  color: #111113;
+  box-shadow: 2px 2px 5px #000;
+  background-color: #4054b4;
+  transition-duration: .25s;
 }

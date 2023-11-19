@@ -1,0 +1,12 @@
+.footer-bottom {
+  background: #4054b4;
+  color: #eeeeee;
+  text-align: center;
+  padding: 20px 0px;
+  flex-shrink: 0;
+  bottom: 0;
+  width: 100%;
+  margin-bottom: -50px;
+}
+
+

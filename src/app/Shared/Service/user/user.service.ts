@@ -1,9 +1,7 @@
 import { Injectable } from '@angular/core';
-import { HttpClient } from '@angular/common/http';
-import { Observable } from 'rxjs';
-import { of } from "rxjs";
-import { switchMap } from 'rxjs/operators';
-import { map } from "rxjs";
+import { HttpClient } from "@angular/common/http";
+import { Observable, of } from "rxjs";
+import { switchMap, map } from 'rxjs/operators';
 import { v4 } from "uuid";
 
 @Injectable({
@@ -11,6 +9,7 @@ import { v4 } from "uuid";
 })
 export class UserService {
   private username: string | null = null;
+  private userId: string | null = null;
   private baseURL = 'http://localhost:3000';
 
   constructor(private http: HttpClient) { }
@@ -22,27 +21,18 @@ export class UserService {
   }
 
   login(email: string, password: string): Observable<any> {
-    // Comprueba si el usuario existe
     return this.checkUserExists(email).pipe(
       switchMap((userExists: boolean) => {
         if (userExists) {
-          // Usuario encontrado, ahora verifica la contraseña
           return this.http.get<any[]>(`${this.baseURL}/usuarios`, {
-            params: {email},
+            params: { email },
           }).pipe(
             map((users: any[]) => {
               const user = users.find((u: any) => u.email === email);
-              if (user.password === password) {
-                // Contraseña correcta, devuelve el usuario
-                return user;
-              } else {
-                // Contraseña incorrecta
-                return null;
-              }
+              return user && user.password === password ? user : null;
             })
           );
         } else {
-          // Usuario no encontrado
           return of(null);
         }
       })
@@ -50,36 +40,16 @@ export class UserService {
   }
 
   signup(email: string, password: string): Observable<any> {
-    // Comprueba si el usuario existe antes de intentar registrarlo
     return this.checkUserExists(email).pipe(
       switchMap((userExists) => {
         if (userExists) {
-          // Si el usuario ya existe, devuelve null u otra señal de que el registro falló
           return of(null);
         } else {
-          // Genera un ID único para el nuevo usuario
           const userId = v4();
-          const newUser = {
-            id: userId,
-            email,
-            password
-          };
-          // Realiza el registro del nuevo usuario
+          const newUser = { id: userId, email, password };
           return this.http.post<any>(`${this.baseURL}/usuarios`, newUser);
         }
       })
     );
-  }
-
-  setUsername(username: string): void {
-    this.username = username;
-  }
-
-  getUserId(): string | null {
-    return this.username;
-  }
-
-  clearUser(): void {
-    this.username = null;
   }
 }

@@ -1,9 +1,10 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
-import { map, Observable } from 'rxjs';
+import { Observable } from 'rxjs';
+import { map } from 'rxjs/operators';
 import * as graphlib from 'graphlib';
 import { Graph, Path } from 'graphlib';
-import {AuthService} from "../../../Shared/Service/Autenticacion/autenticacion.service";
+import { AuthService } from "../../../Shared/Service/Autenticacion/autenticacion.service";
 
 @Injectable({
   providedIn: 'root',
@@ -14,12 +15,8 @@ export class VuelosService {
 
   constructor(private http: HttpClient, private authService: AuthService) {
     this.buildGraph().subscribe(
-      (graphData) => {
-        this.graph = graphData;
-      },
-      (error) => {
-        console.error('Error al construir el grafo: ', error);
-      }
+      (graphData) => this.graph = graphData,
+      (error) => console.error('Error al construir el grafo: ', error)
     );
   }
 
@@ -32,12 +29,10 @@ export class VuelosService {
       map((vuelosData: any) => {
         const graph = new graphlib.Graph();
         vuelosData.forEach((vuelo: any) => {
-          const origenNode = vuelo.origen;
-          const destinoNode = vuelo.destino;
-          const costo = vuelo.costo || 1;
+          const { origen, destino, costo = 1 } = vuelo;
           const peso = costo !== 0 ? vuelo.distancia / costo : 0;
 
-          graph.setEdge(origenNode, destinoNode, peso);
+          graph.setEdge(origen, destino, peso);
         });
 
         return graph;
@@ -57,8 +52,7 @@ export class VuelosService {
   calculatorRuta(origen: string | null, destino: string | null): Observable<string[]> {
     const origenFormatted = origen?.toUpperCase().replace(/,/,'');
     const destinoFormatted = destino?.toUpperCase().replace(/,/,'');
-    console.log(origenFormatted, "-", destinoFormatted)
-    console.log(this.graph)
+
     return new Observable<string[]>((observer) => {
       if (!origenFormatted || !destinoFormatted) {
         observer.next([]);
@@ -83,23 +77,9 @@ export class VuelosService {
   }
 
   getPrice(origen: string | null, destino: string | null): Observable<number> {
-    return new Observable<number>((observer) => {
-      this.calculatorRuta(origen, destino).subscribe(
-        (ruta) => {
-          if (ruta.length === 0) {
-            observer.next(0);
-          } else {
-            const costoTotal = this.calcularCostoTotal(ruta);
-            observer.next(costoTotal);
-          }
-          observer.complete();
-        },
-        (error) => {
-          console.error('Error al obtener el precio: ', error);
-          observer.error(error);
-        }
-      );
-    });
+    return this.calculatorRuta(origen, destino).pipe(
+      map((ruta) => (ruta.length === 0 ? 0 : this.calcularCostoTotal(ruta)))
+    );
   }
 
   private calcularCostoTotal(ruta: string[]): number {
@@ -114,11 +94,4 @@ export class VuelosService {
     }
     return costoTotal;
   }
-
-  /*guardarVuelo(vuelo: any): Observable<any> {
-    const userId = this.authService.getUserId();
-    const vueloGuardado = { ...vuelo, userId };
-
-    return this.http.post<any>(this.apiUrl, vueloGuardado);
-  }*/
 }

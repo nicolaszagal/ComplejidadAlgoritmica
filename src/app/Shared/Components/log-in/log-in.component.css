@@ -4,10 +4,9 @@ h1 {
 }
 
 .logo-img{
-  padding-top: 3.5rem;
-  padding-bottom: 1.8em;
-  width: 10%;
-  max-width: 180px;
+  padding-left: 10px;
+  padding-bottom: 5em;
+  align-items: center;
 }
 
 .btn-primary{
@@ -64,7 +63,7 @@ h1 {
   border-radius: 1.5rem;
   padding: 0.50rem;
   border: none;
-  background: #3f51b5;
+  background: #4054b4;
   transition: background-color 0.3s, box-shadow 0.3s, color 0.3s;
 }
 
@@ -80,7 +79,6 @@ h1 {
   justify-content: center;
   align-items: center;
   text-align: center;
-  padding: 2rem;
   background: #fff;
   height: 100%;
 }
@@ -102,7 +100,7 @@ form {
 .login-container button:hover {
   color: #111113;
   box-shadow: 2px 2px 5px #000;
-  background-color: #3f51b5;
+  background-color: #4054b4;
 }
 .redirect{
   font-size: 12px;

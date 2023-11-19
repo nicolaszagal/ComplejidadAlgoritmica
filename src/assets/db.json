@@ -26533,41 +26533,47 @@
   ],
   "usuarios": [
     {
-      "id": "122bj23niovusuhsuvmui21n",
-      "email": "example1@gmail.com",
-      "contraseña": "password1"
+      "id": "8fccc1ff-78ff-4f0c-924a-ba619dcc438f",
+      "email": "nzagalvallejo@gmail.com",
+      "password": "123"
     },
     {
-      "id": "ebdee291-6dd5-4e8a-87f9-40c16d37742c",
-      "email": "nzagalvallejo@gmail.com",
+      "id": "5bc15611-bfd9-4b07-8dbc-a3bc1e07c7db",
+      "email": "u20201c429@upc.edu.pe",
+      "password": "123"
+    },
+    {
+      "id": "e3f49237-5f2c-4c18-8ecd-e1351aef7ce6",
+      "email": "nicozagalv@gmail.com",
       "password": "123"
     }
   ],
   "guardados": [
     {
-      "id": "c5d1cbe2-6382-4abf-ad1a-528bdda0646e",
+      "id": "b2aa6d3e-a615-4008-8b5d-b331900df7e4",
       "vuelo": {
         "ruta": [
-          "BELEN VAL BRASIL",
-          "VITORIA BRASIL",
-          "BOGOTA COLOMBIA",
-          "BERLIN ALEMANIA"
+          "BARCELONA ESPANA",
+          "RIONEGRO ANTIOQUIA COLOMBIA",
+          "ATENAS GRECIA"
         ],
-        "precio": 13469,
-        "tipoVuelo": "Ejecutiva"
-      }
+        "precio": 18673,
+        "tipoVuelo": "Lujo"
+      },
+      "userId": "nzagalvallejo@gmail.com"
     },
     {
-      "id": "dfeede97-2cec-4865-8c4f-4b6354f340b5",
+      "id": "9d710a05-fd88-4b68-b2ff-f48703779c18",
       "vuelo": {
         "ruta": [
-          "ARECIFE ESPANA",
-          "RIONEGRO ANTIOQUIA COLOMBIA",
-          "BELIZE BELIZE"
+          "ABERDEEN INGLATERRA",
+          "BOGOTA COLOMBIA",
+          "ANKARA TURQUIA"
         ],
-        "precio": 12238,
+        "precio": 19236,
         "tipoVuelo": "Turista"
-      }
+      },
+      "userId": "nzagalvallejo@gmail.com"
     }
   ]
 }

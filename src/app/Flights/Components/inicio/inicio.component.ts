@@ -28,37 +28,40 @@ export class InicioComponent implements AfterViewInit {
   errorSeleccionTipoVuelo: string = '';
   guardado: string = '';
 
-  constructor(private destinosService: DestinosService, private vuelosService: VuelosService, private guardarService: GuardarVuelosService) {}
+  constructor(
+    private destinosService: DestinosService,
+    private vuelosService: VuelosService,
+    private guardarService: GuardarVuelosService
+  ) {}
 
   ngAfterViewInit() {
-    // Obtener datos de destinos desde el servicio
-    this.destinosService.getDestinos().subscribe(
-        (destinosData: any) => {
-          this.destinos = this.parseDestinosData(destinosData);
-
-          // Configurar autocompletado para el campo de origen
-          this.filteredOptionsOrigen = this.origenControl.valueChanges.pipe(
-              startWith(''),
-              map(value => this._filter(value || '', this.destinos))
-          );
-
-          // Configurar autocompletado para el campo de destino
-          this.filteredOptionsDestino = this.destinoControl.valueChanges.pipe(
-              startWith(''),
-              map(value => this._filter(value || '', this.destinos))
-          );
-        },
-        error => {
-          console.error('Error al obtener los destinos: ', error);
-        }
-    );
+    this.obtenerDatosDestinos();
     this.vuelosService.buildGraph().subscribe(
       (graphData) => {},
-      (error) => {
-        console.error('Error al construir el grafo: ', error);
-      }
+      (error) => console.error('Error al construir el grafo: ', error)
     );
+  }
 
+  private obtenerDatosDestinos() {
+    this.destinosService.getDestinos().subscribe(
+      (destinosData: any) => {
+        this.destinos = this.parseDestinosData(destinosData);
+        this.configurarAutocompletado();
+      },
+      (error) => console.error('Error al obtener los destinos: ', error)
+    );
+  }
+
+  private configurarAutocompletado() {
+    this.filteredOptionsOrigen = this.setupAutocomplete(this.origenControl);
+    this.filteredOptionsDestino = this.setupAutocomplete(this.destinoControl);
+  }
+
+  private setupAutocomplete(control: FormControl): Observable<string[]> {
+    return control.valueChanges.pipe(
+      startWith(''),
+      map(value => this._filter(value || '', this.destinos))
+    );
   }
 
   private _filter(value: string, options: string[]): string[] {
@@ -96,7 +99,7 @@ export class InicioComponent implements AfterViewInit {
         console.log('Ruta encontrada:', rutaCalculada);
         this.rutaEncontrada = rutaCalculada;
         this.mostrarRuta = true;
-        this.mostrarPrecio = false; // Asegúrate de establecer mostrarPrecio en false aquí o en otro lugar si es necesario
+        this.mostrarPrecio = false;
       },
       (error: any) => {
         console.error('Error al calcular la ruta:', error);
@@ -109,7 +112,7 @@ export class InicioComponent implements AfterViewInit {
     const destino = this.destinoControl.value;
 
     if (!this.selectedTipoVuelo) {
-     this.errorSeleccionTipoVuelo = 'Error al obtener el precio: Debes seleccionar un tipo de vuelo.';
+      this.errorSeleccionTipoVuelo = 'Error al obtener el precio: Debes seleccionar un tipo de vuelo.';
       return;
     }
     if (origen && destino) {
@@ -137,16 +140,16 @@ export class InicioComponent implements AfterViewInit {
     }
   }
 
-  private formatearPrecio(numero: number): string{
+  private formatearPrecio(numero: number): string {
     return numero.toLocaleString('es-ES')
   }
 
-  rutaYPrecio(): void{
+  rutaYPrecio(): void {
     this.calcularRuta();
     this.obtenerPrecio();
   }
 
-  guardarVuelo(){
+  guardarVuelo() {
     const vuelo = {
       ruta: this.rutaEncontrada,
       precio: this.precioTotal,
@@ -154,12 +157,8 @@ export class InicioComponent implements AfterViewInit {
     };
 
     this.guardarService.addVuelo(vuelo).subscribe(
-      (response) => {
-        this.guardado = 'Vuelo guardado con éxito!';
-      },
-      (error) => {
-        this.guardado = 'Error al guardar el vuelo :(';
-      }
-    )
+      (response) => this.guardado = 'Vuelo guardado con éxito!',
+      (error) => this.guardado = 'Error al guardar el vuelo :('
+    );
   }
 }
