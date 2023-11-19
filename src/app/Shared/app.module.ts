@@ -19,6 +19,8 @@ import {MatSelectModule} from "@angular/material/select";
 import {MatOptionModule} from "@angular/material/core";
 import {MatAutocompleteModule} from "@angular/material/autocomplete";
 import {CardComponent} from "./Components/card/card.component";
+import {SignUpComponent} from "./Components/sign-up/sign-up.component";
+import {LogInComponent} from "./Components/log-in/log-in.component";
 
 
 @NgModule({
@@ -28,7 +30,9 @@ import {CardComponent} from "./Components/card/card.component";
     InicioComponent,
     FooterComponent,
     MyFlightsComponent,
-    CardComponent
+    CardComponent,
+    SignUpComponent,
+    LogInComponent
   ],
   imports: [
     BrowserModule,
@@ -45,7 +49,7 @@ import {CardComponent} from "./Components/card/card.component";
     MatOptionModule,
     FormsModule,
     MatAutocompleteModule,
-    ReactiveFormsModule
+    ReactiveFormsModule,
   ],
   providers: [],
   bootstrap: [AppComponent]

@@ -50,18 +50,15 @@
   </mat-form-field>
   <br>
 
-  <button mat-raised-button (click)="calcularRuta()">Calcular ruta</button>
-  <button mat-raised-button *ngIf="mostrarPrecio" (click)="obtenerPrecio()">Calcular precio</button>
-
+  <button mat-raised-button (click)="rutaYPrecio()">Calcular ruta</button>
   <br>
-  <br>
-  <br>
-
-  <div *ngIf="mostrarRuta">
-    <app-card [ruta]="rutaEncontrada"></app-card>
+  <div class="card">
+      <app-card *ngIf="mostrarRuta" [ruta]="rutaEncontrada" [precio]="precioTotalFormatted"></app-card>
+      <button mat-raised-button *ngIf="mostrarRuta" (click)="guardarVuelo()">Guardar vuelo</button>
   </div>
-  <div *ngIf="mostrarPrecio">
-    <app-card [precio]="precioTotal"></app-card>
+  <br>
+  <br>
+  <div *ngIf="errorSeleccionTipoVuelo" class="error-message">
+    {{ errorSeleccionTipoVuelo }}
   </div>
-
 </div>

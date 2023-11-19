@@ -1,7 +1,7 @@
 export interface Vuelo {
-  distancia: number;
-  origen: string;
-  destino: string;
-  costo: number;
-  vueloAnterior?: Vuelo;
+  id: string;
+  ruta: string[];
+  precio: number;
+  tipoVuelo: string;
+  userId: string;
 }

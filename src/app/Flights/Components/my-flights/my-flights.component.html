@@ -1,1 +1,11 @@
-<p>my-flights works!</p>
+<div *ngFor="let vuelo of vuelos">
+  <div class="card">
+    <h1>Vuelo</h1>
+    <!-- Usa *ngFor para recorrer cada ciudad en la ruta y mostrarla con un salto de línea -->
+    <h3 *ngFor="let ciudad of vuelo.vuelo.ruta">{{ ciudad }}<br></h3>
+    <h4>Precio: {{ vuelo.vuelo.precio }}</h4>
+    <h4>Tipo de Vuelo: {{ vuelo.vuelo.tipoVuelo }}</h4>
+    <h5>Id de busqueda: {{vuelo.id}}</h5>
+    <button class="eliminar-btn" (click)="eliminarVuelo(vuelo.id)">Eliminar</button>
+  </div>
+</div>

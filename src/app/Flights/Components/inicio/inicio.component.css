@@ -22,3 +22,7 @@
 .example-full-width {
   width: 100%;
 }
+
+.card{
+  box-shadow: black;
+}

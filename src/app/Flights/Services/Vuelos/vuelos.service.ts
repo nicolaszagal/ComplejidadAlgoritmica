@@ -3,6 +3,7 @@ import { HttpClient } from '@angular/common/http';
 import { map, Observable } from 'rxjs';
 import * as graphlib from 'graphlib';
 import { Graph, Path } from 'graphlib';
+import {AuthService} from "../../../Shared/Service/Autenticacion/autenticacion.service";
 
 @Injectable({
   providedIn: 'root',
@@ -11,7 +12,7 @@ export class VuelosService {
   private apiUrl = 'http://localhost:3000/vuelos';
   private graph: Graph = new graphlib.Graph();
 
-  constructor(private http: HttpClient) {
+  constructor(private http: HttpClient, private authService: AuthService) {
     this.buildGraph().subscribe(
       (graphData) => {
         this.graph = graphData;
@@ -80,14 +81,13 @@ export class VuelosService {
       observer.complete();
     });
   }
-  // En vuelos.service.ts
 
   getPrice(origen: string | null, destino: string | null): Observable<number> {
     return new Observable<number>((observer) => {
       this.calculatorRuta(origen, destino).subscribe(
         (ruta) => {
           if (ruta.length === 0) {
-            observer.next(0); // Manejar el caso en que no hay ruta encontrada
+            observer.next(0);
           } else {
             const costoTotal = this.calcularCostoTotal(ruta);
             observer.next(costoTotal);
@@ -115,4 +115,10 @@ export class VuelosService {
     return costoTotal;
   }
 
+  /*guardarVuelo(vuelo: any): Observable<any> {
+    const userId = this.authService.getUserId();
+    const vueloGuardado = { ...vuelo, userId };
+
+    return this.http.post<any>(this.apiUrl, vueloGuardado);
+  }*/
 }

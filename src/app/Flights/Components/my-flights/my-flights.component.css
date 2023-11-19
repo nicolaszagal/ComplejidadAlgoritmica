@@ -1,0 +1,21 @@
+.card {
+  width: 50%;
+  margin: 20px auto;
+  padding: 20px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  border-radius: 8px;
+}
+
+.eliminar-btn {
+  width: 100%;
+  bottom: 10px;
+  left: 0;
+  color: white;
+  background-color: #3949ab;
+  border-color: transparent;
+  height: 40px;
+}
+
+h1{
+  text-align: center;
+}
