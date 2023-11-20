@@ -1,9 +1,14 @@
+// functions/api.js
+const serverless = require('serverless-http');
+const express = require('express');
 const jsonServer = require('json-server');
-const server = jsonServer.create();
-const router = jsonServer.router('db.json'); // Asegúrate de que 'db.json' coincida con el nombre de tu archivo de datos
+const app = express();
+const router = jsonServer.router('../src/assets/db.json');
 const middlewares = jsonServer.defaults();
 
-server.use(middlewares);
-server.use(router);
+app.use('/api', middlewares);
+app.use('/api', router);
 
-module.exports = server;
+module.exports = {
+  handler: serverless(app),
+};
