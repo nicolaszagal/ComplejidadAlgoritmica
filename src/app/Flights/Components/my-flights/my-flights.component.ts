@@ -8,6 +8,8 @@ import { GuardarVuelosService } from "../../../Shared/Service/Guardado/guardar-v
 })
 export class MyFlightsComponent implements OnInit {
   vuelos: any[] = [];
+  errorObtenerVuelos: string = '';
+  errorEliminarVuelo: string = '';
 
   constructor(private guardarService: GuardarVuelosService) { }
 
@@ -17,8 +19,14 @@ export class MyFlightsComponent implements OnInit {
 
   obtenerVuelos() {
     this.guardarService.getVuelos().subscribe(
-      (vuelos: any[]) => this.vuelos = vuelos,
-      (error) => console.error('Error al obtener vuelos guardados:', error)
+      (vuelos: any[]) => {
+        this.vuelos = vuelos;
+        this.errorObtenerVuelos = ''; // Limpiar mensaje de error en éxito
+      },
+      (error) => {
+        console.error('Error al obtener vuelos guardados:', error);
+        this.errorObtenerVuelos = 'Error al obtener vuelos guardados.';
+      }
     );
   }
 
@@ -27,8 +35,13 @@ export class MyFlightsComponent implements OnInit {
       () => {
         console.log('Vuelo eliminado con éxito.');
         this.obtenerVuelos();
+        this.errorEliminarVuelo = ''; // Limpiar mensaje de error en éxito
       },
-      (error) => console.error('Error al eliminar el vuelo:', error)
+      (error) => {
+        console.error('Error al eliminar el vuelo:', error);
+        this.errorEliminarVuelo = 'Error al eliminar el vuelo.';
+      }
     );
   }
 }
+

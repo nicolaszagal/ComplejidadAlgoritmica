@@ -1,10 +1,9 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
-import { v4 } from 'uuid';
-import { AuthService } from '../Autenticacion/autenticacion.service';
-import { map } from 'rxjs/operators';
-import {VueloGuardado} from "../../../Flights/Models/vuelosGuardados";
+import { map, switchMap } from 'rxjs/operators';
+import { v4 as uuidv4 } from 'uuid'; // Utilizamos la función correcta para generar UUID
+import { VueloGuardado } from "../../../Flights/Models/vuelosGuardados";
 
 @Injectable({
   providedIn: 'root',
@@ -12,25 +11,24 @@ import {VueloGuardado} from "../../../Flights/Models/vuelosGuardados";
 export class GuardarVuelosService {
   private apiUrl = '/assets/db.json';
 
-  constructor(private http: HttpClient, private authService: AuthService) {}
+  constructor(private http: HttpClient) {}
 
   getVuelos(): Observable<VueloGuardado[]> {
-    const userId = this.authService.getUserId();
     return this.getVuelosData().pipe(
-      map((dbData) => dbData.guardados.filter((vueloGuardado: VueloGuardado) => vueloGuardado.userId === userId))
+      map((dbData) => dbData.guardados || [])
     );
   }
 
   addVuelo(vuelo: VueloGuardado): Observable<any> {
-    const rutaId = v4();
-    const userId = this.authService.getUserId();
-    const vueloGuardado: VueloGuardado = { id: rutaId, vuelo: vuelo.vuelo, userId: vuelo.userId };
-    return this.updateDb('guardados', [...this.getDbData().guardados, vueloGuardado]);
+    vuelo.id = uuidv4(); // Generamos un nuevo ID al agregar un vuelo
+    return this.updateDb('guardados', [...this.getDbData().guardados, vuelo]);
   }
 
   deleteVuelo(id: string): Observable<any> {
-    const guardados = this.getDbData().guardados.filter((vueloGuardado: VueloGuardado) => vueloGuardado.id !== id);
-    return this.updateDb('guardados', guardados);
+    const guardados = this.getDbData().guardados || [];
+    const updatedGuardados = guardados.filter((vuelo: VueloGuardado) => vuelo.id !== id);
+
+    return this.updateDb('guardados', updatedGuardados);
   }
 
   private getVuelosData(): Observable<any> {
@@ -47,4 +45,3 @@ export class GuardarVuelosService {
     return this.http.put(this.apiUrl, dbData);
   }
 }
-
