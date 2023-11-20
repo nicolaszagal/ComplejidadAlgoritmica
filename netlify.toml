@@ -12,3 +12,7 @@ force = true
 [dev]
 command ="npm run start"
 port = 3000
+
+[[functions]]
+directory = "functions"
+include = ["*.js", "*.js.map"]
