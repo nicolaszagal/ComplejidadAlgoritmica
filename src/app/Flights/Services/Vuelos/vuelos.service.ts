@@ -10,7 +10,7 @@ import { AuthService } from "../../../Shared/Service/Autenticacion/autenticacion
   providedIn: 'root',
 })
 export class VuelosService {
-  private apiUrl = 'http://localhost:3000/vuelos';
+  private apiUrl = window.location.hostname === 'production' ? 'https://incredible-sunburst-a91e6b.netlify.app/api/vuelos':'http://localhost:3000/';
   private graph: Graph = new graphlib.Graph();
   private factor: number = 1;
 

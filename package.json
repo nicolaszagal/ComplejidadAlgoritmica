@@ -22,11 +22,11 @@
     "@angular/router": "^16.2.0",
     "cors": "^2.8.5",
     "graphlib": "^2.1.8",
+    "json-server": "^0.16.3",
     "rxjs": "~7.8.0",
     "tslib": "^2.3.0",
     "uuid": "^9.0.1",
-    "zone.js": "~0.13.0",
-    "json-server": "^0.16.3"
+    "zone.js": "~0.13.0"
   },
   "devDependencies": {
     "@angular-devkit/build-angular": "^16.2.4",
@@ -34,6 +34,7 @@
     "@angular/compiler-cli": "^16.2.0",
     "@types/graphlib": "^2.1.11",
     "@types/jasmine": "~4.3.0",
+    "@types/node": "^20.9.2",
     "@types/uuid": "^9.0.7",
     "jasmine-core": "~4.6.0",
     "karma": "~6.4.0",
