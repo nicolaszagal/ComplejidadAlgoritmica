@@ -9,7 +9,7 @@ import { AuthService } from "../Autenticacion/autenticacion.service";
 })
 export class GuardarVuelosService {
 
-  private apiUrl = window.location.hostname === 'production' ? 'https://incredible-sunburst-a91e6b.netlify.app/api/guardados':'http://localhost:3000/';
+  private apiUrl = 'http://localhost:3000/guardados';
 
   constructor(private http: HttpClient, private authService: AuthService) {}
 
