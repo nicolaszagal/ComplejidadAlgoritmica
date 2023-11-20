@@ -5,10 +5,10 @@ functions = "functions"
 
 [[redirects]]
 from = "/api/*"
-to = "/.netlify/functions/api/:splat"
+to = "/src/assets/:splat"
 status = 200
 force = true
 
 [dev]
 command ="npm run start"
-port = 8000
+port = 3000
