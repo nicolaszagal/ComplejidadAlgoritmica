@@ -10,7 +10,7 @@ import { v4 } from "uuid";
 export class UserService {
   private baseURL = window.location.hostname === 'production' ? 'https://incredible-sunburst-a91e6b.netlify.app/api/':'http://localhost:3000/';
 
-  constructor(private http: HttpClient) { }
+  constructor(private http: HttpClient) {  }
 
   checkUserExists(email: string): Observable<boolean> {
     return this.http.get<any[]>(`${this.baseURL}/usuarios`).pipe(
