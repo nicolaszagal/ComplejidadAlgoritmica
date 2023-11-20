@@ -8,7 +8,7 @@ import { catchError } from 'rxjs/operators';
 })
 export class DestinosService {
 
-  private destinosUrl = window.location.hostname === 'production' ? 'https://incredible-sunburst-a91e6b.netlify.app/api/destinos':'http://localhost:3000/';
+  private destinosUrl = 'http://localhost:3000/destinos';
   constructor(private http: HttpClient) { }
 
   getDestinos(): Observable<any[]> {

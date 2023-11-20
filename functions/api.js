@@ -1,27 +1,9 @@
-// api.js
-const express = require('express');
-const serverless = require('serverless-http');
-const app = express();
-const path = require('path');
+const jsonServer = require('json-server');
+const server = jsonServer.create();
+const router = jsonServer.router('db.json'); // Asegúrate de que 'db.json' coincida con el nombre de tu archivo de datos
+const middlewares = jsonServer.defaults();
 
-app.use(express.json());
+server.use(middlewares);
+server.use(router);
 
-app.get('/usuarios', (req, res) => {
-  const dbPath = path.resolve(__dirname, '../src/assets/db.json');
-  res.sendFile(dbPath);
-});
-app.get('/destinos', (req, res) => {
-  const dbPath = path.resolve(__dirname, '../src/assets/db.json');
-  res.sendFile(dbPath);
-});
-app.get('/guardados', (req, res) => {
-  const dbPath = path.resolve(__dirname, '../src/assets/db.json');
-  res.sendFile(dbPath);
-});
-app.get('/vuelos', (req, res) => {
-  const dbPath = path.resolve(__dirname, '../src/assets/db.json');
-  res.sendFile(dbPath);
-});
-
-module.exports = app;
-module.exports.handler = serverless(app);
+module.exports = server;

@@ -8,7 +8,7 @@ import { v4 } from "uuid";
   providedIn: 'root'
 })
 export class UserService {
-  private baseURL = window.location.hostname === 'production' ? 'https://incredible-sunburst-a91e6b.netlify.app/api/':'http://localhost:3000/';
+  private baseURL = 'http://localhost:3000';
 
   constructor(private http: HttpClient) {  }
 

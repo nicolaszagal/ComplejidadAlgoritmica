@@ -1,14 +1,10 @@
+
 [build]
-command = "ng build"
-publish = "dist/complejidad"
-functions = "functions"
+command = "ng build --prod"
+publish = "dist/[nombre-de-tu-proyecto]"
 
 [[redirects]]
 from = "/api/*"
 to = "/.netlify/functions/api/:splat"
 status = 200
 force = true
-
-[dev]
-command ="npm run start"
-port = 3000
