@@ -21,6 +21,7 @@ import {MatAutocompleteModule} from "@angular/material/autocomplete";
 import {CardComponent} from "./Components/card/card.component";
 import {SignUpComponent} from "./Components/sign-up/sign-up.component";
 import {LogInComponent} from "./Components/log-in/log-in.component";
+import {MatSlideToggleModule} from "@angular/material/slide-toggle";
 
 
 @NgModule({
@@ -50,6 +51,7 @@ import {LogInComponent} from "./Components/log-in/log-in.component";
     FormsModule,
     MatAutocompleteModule,
     ReactiveFormsModule,
+    MatSlideToggleModule
   ],
   providers: [],
   bootstrap: [AppComponent]

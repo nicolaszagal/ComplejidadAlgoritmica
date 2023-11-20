@@ -50,16 +50,23 @@
     </mat-select>
   </mat-form-field>
   <br>
+  <mat-slide-toggle class="slider" [(ngModel)]="idaYVuelta">Ida y Vuelta</mat-slide-toggle>
+  <br>
 
   <button mat-raised-button (click)="rutaYPrecio()">Calcular ruta</button>
   <br>
-  <div class="card">
-      <app-card *ngIf="mostrarRuta" [ruta]="rutaEncontrada" [precio]="precioTotalFormatted"></app-card>
-      <button mat-raised-button *ngIf="mostrarRuta" (click)="guardarVuelo()">Guardar vuelo</button>
+  <div class="card "*ngIf="mostrarRuta">
+    <app-card [ruta]="rutaEncontrada" [precio]="precioTotalFormatted"></app-card>
+    <app-card *ngIf="idaYVuelta" [ruta]="rutaEncontradaVuelta" [precio]="precioTotalVueltaFormatted"></app-card>
+    <button mat-raised-button (click)="guardarVuelo()">Guardar vuelo</button>
   </div>
   <br>
   <br>
   <div *ngIf="errorSeleccionTipoVuelo" class="error-message">
     {{ errorSeleccionTipoVuelo }}
   </div>
+  <div *ngIf="errorCalculandoRuta" class="error-message">
+    {{ errorCalculandoRuta }}
+  </div>
+  <br><br><br>
 </div>

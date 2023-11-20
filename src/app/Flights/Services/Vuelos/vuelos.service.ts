@@ -36,7 +36,7 @@ export class VuelosService {
           } else if (vuelo.distancia < 6000){
             this.factor = 0.35
           }else{
-            this.factor = 0.45
+            this.factor = 0.40
           }
           const peso = vuelo.costo * this.factor;
 
@@ -63,8 +63,7 @@ export class VuelosService {
 
     return new Observable<string[]>((observer) => {
       if (!origenFormatted || !destinoFormatted) {
-        observer.next([]);
-        observer.complete();
+        observer.error('Error: Debes seleccionar un origen y destino.');
         return;
       }
 
@@ -72,8 +71,7 @@ export class VuelosService {
 
       if (!dijkstraResult[destinoFormatted]) {
         console.log('No se encontró una ruta');
-        observer.next([]);
-        observer.complete();
+        observer.error('Aun no contamos con vuelos al destino seleccionado');
         return;
       }
 
@@ -83,6 +81,7 @@ export class VuelosService {
       observer.complete();
     });
   }
+
 
   getPrice(origen: string | null, destino: string | null): Observable<number> {
     return this.calculatorRuta(origen, destino).pipe(

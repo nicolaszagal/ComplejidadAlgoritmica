@@ -31578,15 +31578,31 @@
   ],
   "guardados": [
     {
-      "id": "95279d0c-c663-4c66-a0e1-81fad5028349",
+      "id": "ebc0e1eb-f34f-4140-87a8-730cde8d9236",
+      "vuelo": {
+        "ruta": [
+          "LIMA PERU",
+          "CARTAGENA COLOMBIA",
+          "BUDAPEST HUNGRIA",
+          "BUDAPEST HUNGRIA",
+          "BOGOTA COLOMBIA",
+          "LIMA PERU"
+        ],
+        "precio": 841,
+        "tipoVuelo": "Turista"
+      },
+      "userId": "nzagalvallejo@gmail.com"
+    },
+    {
+      "id": "e71b2826-7dff-466a-a0d4-0d5a5dc8adc3",
       "vuelo": {
         "ruta": [
           "LIMA PERU",
           "CARTAGENA COLOMBIA",
           "BUDAPEST HUNGRIA"
         ],
-        "precio": 841,
-        "tipoVuelo": "Turista"
+        "precio": 967,
+        "tipoVuelo": "Ejecutiva"
       },
       "userId": "nzagalvallejo@gmail.com"
     }

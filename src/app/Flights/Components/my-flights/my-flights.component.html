@@ -18,6 +18,11 @@
     </div>
     <h4>Precio: {{ vuelo.vuelo.precio }}</h4>
     <h4>Tipo de Vuelo: {{ vuelo.vuelo.tipoVuelo }}</h4>
+    <h4 *ngIf="vuelo.vuelo.idaYVuelta">Solo ida</h4>
     <button class="eliminar-btn" (click)="eliminarVuelo(vuelo.id)">Eliminar</button>
   </div>
 </div>
+<div>
+  <br><br><br><br><br><br>
+</div>
+
