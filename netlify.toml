@@ -1,6 +1,6 @@
 [build]
-command = "ng build --prod"
-publish = "dist/[nombre-de-tu-proyecto]"
+command = "ng build"
+publish = "dist/"
 
 [[redirects]]
 from = "/api/*"
