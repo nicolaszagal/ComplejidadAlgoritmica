@@ -1,22 +1,22 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
-import { Observable } from 'rxjs';
-import { map } from 'rxjs/operators';
+import { Observable, of } from 'rxjs';
+import { map, catchError } from 'rxjs/operators';
 import * as graphlib from 'graphlib';
 import { Graph, Path } from 'graphlib';
-import { AuthService } from "../../../Shared/Service/Autenticacion/autenticacion.service";
+import { AuthService } from '../../../Shared/Service/Autenticacion/autenticacion.service';
 
 @Injectable({
   providedIn: 'root',
 })
 export class VuelosService {
-  private apiUrl = 'http://localhost:3000/vuelos';
+  private apiUrl = '/assets/db.json'; // Ruta al archivo db.json en tu proyecto
   private graph: Graph = new graphlib.Graph();
   private factor: number = 1;
 
   constructor(private http: HttpClient, private authService: AuthService) {
     this.buildGraph().subscribe(
-      (graphData) => this.graph = graphData,
+      (graphData) => (this.graph = graphData),
       (error) => console.error('Error al construir el grafo: ', error)
     );
   }
@@ -27,16 +27,17 @@ export class VuelosService {
 
   buildGraph(): Observable<Graph> {
     return this.getGraphData().pipe(
-      map((vuelosData: any) => {
+      map((dbData: any) => {
+        const vuelosData = dbData.vuelos;
         const graph = new graphlib.Graph();
         vuelosData.forEach((vuelo: any) => {
           const { origen, destino } = vuelo;
-          if(vuelo.distancia < 4000){
-            this.factor = 0.15
-          } else if (vuelo.distancia < 6000){
-            this.factor = 0.35
-          }else{
-            this.factor = 0.40
+          if (vuelo.distancia < 4000) {
+            this.factor = 0.15;
+          } else if (vuelo.distancia < 6000) {
+            this.factor = 0.35;
+          } else {
+            this.factor = 0.40;
           }
           const peso = vuelo.costo * this.factor;
 
@@ -58,8 +59,8 @@ export class VuelosService {
   }
 
   calculatorRuta(origen: string | null, destino: string | null): Observable<string[]> {
-    const origenFormatted = origen?.toUpperCase().replace(/,/,'');
-    const destinoFormatted = destino?.toUpperCase().replace(/,/,'');
+    const origenFormatted = origen?.toUpperCase().replace(/,/, '');
+    const destinoFormatted = destino?.toUpperCase().replace(/,/, '');
 
     return new Observable<string[]>((observer) => {
       if (!origenFormatted || !destinoFormatted) {
@@ -81,7 +82,6 @@ export class VuelosService {
       observer.complete();
     });
   }
-
 
   getPrice(origen: string | null, destino: string | null): Observable<number> {
     return this.calculatorRuta(origen, destino).pipe(

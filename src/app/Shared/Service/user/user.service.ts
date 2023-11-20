@@ -1,38 +1,28 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from "@angular/common/http";
 import { Observable, of } from "rxjs";
-import { switchMap, map } from 'rxjs/operators';
+import {switchMap, map, catchError} from 'rxjs/operators';
 import { v4 } from "uuid";
 
 @Injectable({
   providedIn: 'root'
 })
 export class UserService {
-  private baseURL = 'http://localhost:3000';
+  private apiUrl = '/assets/db.json';
 
-  constructor(private http: HttpClient) {  }
+  constructor(private http: HttpClient) {}
 
   checkUserExists(email: string): Observable<boolean> {
-    return this.http.get<any[]>(`${this.baseURL}/usuarios`).pipe(
-      map(users => users.some(user => user.email === email))
+    return this.http.get<any>(this.apiUrl).pipe(
+      map((data) => data.usuarios.some((user: any) => user.email === email))
     );
   }
 
   login(email: string, password: string): Observable<any> {
-    return this.checkUserExists(email).pipe(
-      switchMap((userExists: boolean) => {
-        if (userExists) {
-          return this.http.get<any[]>(`${this.baseURL}/usuarios`, {
-            params: { email },
-          }).pipe(
-            map((users: any[]) => {
-              const user = users.find((u: any) => u.email === email);
-              return user && user.password === password ? user : null;
-            })
-          );
-        } else {
-          return of(null);
-        }
+    return this.http.get<any>(this.apiUrl).pipe(
+      switchMap((data) => {
+        const user = data.usuarios.find((u: any) => u.email === email);
+        return of(user && user.password === password ? user : null);
       })
     );
   }
@@ -45,9 +35,27 @@ export class UserService {
         } else {
           const userId = v4();
           const newUser = { id: userId, email, password };
-          return this.http.post<any>(`${this.baseURL}/usuarios`, newUser);
+          return this.updateDb('usuarios', [...this.getDbData().usuarios, newUser]);
         }
       })
     );
   }
+
+  private getDbData(): any {
+    return {};
+  }
+
+  private updateDb(key: string, newData: any): Observable<any> {
+    const dbData = this.getDbData();
+    dbData[key] = newData;
+
+    return this.http.post(this.apiUrl, dbData).pipe(
+      switchMap(() => of(newData)),
+      catchError((error) => {
+        console.error('Error updating database:', error);
+        return of(null);
+      })
+    );
+  }
 }
+

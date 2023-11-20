@@ -4,6 +4,7 @@ import { startWith, map, Observable } from "rxjs";
 import { DestinosService } from "../../Services/Destinos/destinos.service";
 import { VuelosService } from "../../Services/Vuelos/vuelos.service"
 import { GuardarVuelosService } from "../../../Shared/Service/Guardado/guardar-vuelos.service";
+import {VueloGuardado} from "../../Models/vuelosGuardados";
 
 @Component({
   selector: 'app-inicio',
@@ -236,10 +237,14 @@ export class InicioComponent implements AfterViewInit {
   }
 
   guardarVuelo() {
-    const vuelo = {
-      ruta: this.rutaEncontrada,
-      precio: this.precioTotal,
-      tipoVuelo: this.selectedTipoVuelo,
+    const vuelo: VueloGuardado = {
+      id: '', // asigna el valor correcto según tu lógica
+      vuelo: {
+        ruta: this.rutaEncontrada,
+        precio: this.precioTotal,
+        tipoVuelo: this.selectedTipoVuelo,
+      },
+      userId: '', // asigna el valor correcto según tu lógica
     };
 
     this.guardarService.addVuelo(vuelo).subscribe(
@@ -247,4 +252,5 @@ export class InicioComponent implements AfterViewInit {
       (error) => this.guardado = 'Error al guardar el vuelo :('
     );
   }
+
 }
