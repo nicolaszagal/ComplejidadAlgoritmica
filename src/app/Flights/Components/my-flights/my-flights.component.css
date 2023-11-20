@@ -26,3 +26,7 @@ h1{
   background-color: #4054b4;
   transition-duration: .25s;
 }
+
+.negrita {
+  font-weight: bold;
+}

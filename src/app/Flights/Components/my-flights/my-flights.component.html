@@ -1,10 +1,21 @@
+<br><br><br><br>
 <div *ngFor="let vuelo of vuelos">
+  <br><br><br>
   <div class="card">
     <h1>Vuelo:
       <h5>{{vuelo.id}}</h5>
     </h1>
-    <!-- Usa *ngFor para recorrer cada ciudad en la ruta y mostrarla con un salto de línea -->
-    <h3 *ngFor="let ciudad of vuelo.vuelo.ruta">{{ ciudad }}<br></h3>
+    <div *ngFor="let ciudad of vuelo.vuelo.ruta; let first = first; let last = last">
+      <ng-container *ngIf="first">
+        <h3><span class="negrita">{{ ciudad }}</span><br></h3>
+      </ng-container>
+      <ng-container *ngIf="!first && !last">
+        <h3>{{ ciudad }}<br></h3>
+      </ng-container>
+      <ng-container *ngIf="last">
+        <h3><span class="negrita">{{ ciudad }}</span><br></h3>
+      </ng-container>
+    </div>
     <h4>Precio: {{ vuelo.vuelo.precio }}</h4>
     <h4>Tipo de Vuelo: {{ vuelo.vuelo.tipoVuelo }}</h4>
     <button class="eliminar-btn" (click)="eliminarVuelo(vuelo.id)">Eliminar</button>

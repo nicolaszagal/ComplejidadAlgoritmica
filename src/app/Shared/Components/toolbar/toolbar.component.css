@@ -8,3 +8,6 @@
   text-decoration: none;
 
 }
+.toolbar{
+  position: fixed;
+}

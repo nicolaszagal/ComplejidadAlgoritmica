@@ -37,7 +37,9 @@ export class InicioComponent implements AfterViewInit {
   ngAfterViewInit() {
     this.obtenerDatosDestinos();
     this.vuelosService.buildGraph().subscribe(
-      (graphData) => {},
+      (graphData) => {
+        console.log(graphData)
+      },
       (error) => console.error('Error al construir el grafo: ', error)
     );
   }

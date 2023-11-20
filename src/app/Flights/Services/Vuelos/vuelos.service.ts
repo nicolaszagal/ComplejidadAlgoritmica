@@ -12,6 +12,7 @@ import { AuthService } from "../../../Shared/Service/Autenticacion/autenticacion
 export class VuelosService {
   private apiUrl = 'http://localhost:3000/vuelos';
   private graph: Graph = new graphlib.Graph();
+  private factor: number = 1;
 
   constructor(private http: HttpClient, private authService: AuthService) {
     this.buildGraph().subscribe(
@@ -29,8 +30,15 @@ export class VuelosService {
       map((vuelosData: any) => {
         const graph = new graphlib.Graph();
         vuelosData.forEach((vuelo: any) => {
-          const { origen, destino, costo = 1 } = vuelo;
-          const peso = costo !== 0 ? vuelo.distancia / costo : 0;
+          const { origen, destino } = vuelo;
+          if(vuelo.distancia < 4000){
+            this.factor = 0.15
+          } else if (vuelo.distancia < 6000){
+            this.factor = 0.35
+          }else{
+            this.factor = 0.45
+          }
+          const peso = vuelo.costo * this.factor;
 
           graph.setEdge(origen, destino, peso);
         });
