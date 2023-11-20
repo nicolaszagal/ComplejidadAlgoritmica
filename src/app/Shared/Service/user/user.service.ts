@@ -8,7 +8,7 @@ import { v4 } from "uuid";
   providedIn: 'root'
 })
 export class UserService {
-  private baseURL = 'http://localhost:3000/';
+  private baseURL = 'http://localhost:3000';
 
   constructor(private http: HttpClient) { }
 
